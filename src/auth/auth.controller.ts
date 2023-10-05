@@ -13,8 +13,13 @@ export class AuthController {
     summary: "Criar novo usuário"
   })
   @Post()
+  @ApiOperation({summary: 'Criar novo usuário'})
   create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+    try {
+      return this.authService.create(createAuthDto);
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   @Get()
