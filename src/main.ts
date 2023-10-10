@@ -6,13 +6,18 @@ import { config } from 'rxjs';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const port = 3000 || process.env.PORT
+  const port = 3000 || process.env.PORT;
 
   const app = await NestFactory.create(AppModule);
 
-  app.useGlobalPipes(new ValidationPipe())
+  app.useGlobalPipes(new ValidationPipe());
 
-  const config = new DocumentBuilder().setTitle('Nest-Project').setVersion("1.0.0").addTag('Auth').addServer('http://localhost:3000', 'Local').build();
+  const config = new DocumentBuilder()
+    .setTitle('Nest-Project')
+    .setVersion('1.0.0')
+    .addTag('User')
+    .addServer('http://localhost:3000', 'Local')
+    .build();
 
   const document = SwaggerModule.createDocument(app, config);
 
@@ -20,9 +25,6 @@ async function bootstrap() {
 
   await app.listen(port);
 
-  console.log("http://localhost:" + port + "/docs")
-
-
-
+  console.log('http://localhost:' + port + '/docs');
 }
 bootstrap();
