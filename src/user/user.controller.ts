@@ -13,7 +13,7 @@ export class UserController {
     summary: "Criar novo usuário"
   })
   @Post()
-  @ApiOperation({summary: 'Criar novo usuário'})
+  @ApiOperation({summary: 'Criar novo usuário',})
   create(@Body() createAuthDto: CreateUserDto) {
     try {
       return this.userService.create(createAuthDto);
