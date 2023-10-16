@@ -2,33 +2,69 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prismaService: PrismaService) {
-  }
+  constructor(private readonly prismaService: PrismaService) {}
+
   create(createUserDto: CreateUserDto) {
-    this.prismaService.user.create({ data: createUserDto }).then((res) => {
-      console.log("Usuário cadastrado")
-      return res 
-    }).catch((error)=>{
-      throw Error(`Error ao cadastrar usuário: ${error}`)
-    })
+    this.prismaService.user
+      .create({ data: createUserDto })
+      .then((res) => {
+        console.log('Usuário cadastrado');
+        return res;
+      })
+      .catch((error) => {
+        throw Error(`Error ao cadastrar usuário: ${error}`);
+      });
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll() {
+    const data: User[] = await this.prismaService.user.findMany();
+
+    data.forEach((element) => {
+      delete element.password;
+    });
+
+    return data;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string) {
+    try {
+      const data: User = await this.prismaService.user.findUnique({
+        where: { id },
+      });
+
+      delete data.password; //comando para remover a senha do objeto
+
+      return data;
+    } catch (error) {
+      return 'Id de usuário não existente !';
+    }
   }
 
-  update(id: number, updateAuthDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateAuthDto: UpdateUserDto) {
+    try {
+      const data: User = await this.prismaService.user.update({
+        where: { id },
+        data: updateAuthDto,
+      });
+
+      delete data.password; //comando para remover a senha do objeto
+
+      return data;
+
+    } catch (error) {
+      return 'Id de usuário não existente !';
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    try {
+      await this.prismaService.user.delete({where: {id}})
+    } catch (error) {
+      return "Id de usuário não existente !"
+    }
   }
 }
